@@ -53,15 +53,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\_Completed-Assets\Scripts\Atomic_Rotator.cs" />
      <Compile Include="Assets\_Completed-Assets\Scripts\CC_Move.cs" />
+     <Compile Include="Assets\_Completed-Assets\Scripts\CC_Move2.cs" />
      <Compile Include="Assets\_Completed-Assets\Scripts\CompleteCameraController.cs" />
      <Compile Include="Assets\_Completed-Assets\Scripts\CompletePlayerController.cs" />
      <Compile Include="Assets\_Completed-Assets\Scripts\CompleteRotator.cs" />
      <Compile Include="Assets\_Completed-Assets\Scripts\Movement.cs" />
      <Compile Include="Assets\_Completed-Assets\Scripts\Rb2D_Move.cs" />
-     <Compile Include="Assets\_Completed-Assets\Scripts\Rb2D_Movement.cs" />
+     <Compile Include="Assets\_Completed-Assets\Scripts\Rotator.cs" />
+     <Compile Include="Assets\_Completed-Assets\Scripts\UFO_Rotator.cs" />
+     <Compile Include="Assets\CharacterController2D\CharacterController2D.cs" />
      <Compile Include="Assets\Rb2D_Move.cs" />
-     <Compile Include="Assets\Rotator.cs" />
      <Compile Include="Assets\TutorialInfo\Scripts\TutorialInfo.cs" />
      <None Include="Assets\TutorialInfo\Fonts\LICENSE.txt" />
  <Reference Include="Unity.TextMeshPro.Editor">
