@@ -17,6 +17,7 @@ public class PauseMenu : MonoBehaviour
         {
         	PauseMenuUI.SetActive(true);
         	Time.timeScale = 0f;
+        	Debug.Log("Paused");
         }
         else
         {
@@ -27,6 +28,13 @@ public class PauseMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
         	IsPaused = !IsPaused;
+        	Debug.Log("Escape key pressed");
+        }
+
+        if (Input.GetKey(KeyCode.M))
+        {
+        	Debug.Log("M key pressed");
+        	LoadMenu();
         }
     }
 
@@ -46,6 +54,7 @@ public class PauseMenu : MonoBehaviour
     {
     	Time.timeScale = 1f;
     	SceneManager.LoadScene("Start_Menu");
+    	IsPaused = !IsPaused;
     }
 
     public void QuitGame()

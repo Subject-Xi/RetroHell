@@ -1,0 +1,10 @@
+sceneSetups:
+- path: Assets/Start_Menu.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/BulletTesting.unity
+  isLoaded: 1
+  isActive: 1
+- path: Assets/Pickup_Testing.unity
+  isLoaded: 0
+  isActive: 0
