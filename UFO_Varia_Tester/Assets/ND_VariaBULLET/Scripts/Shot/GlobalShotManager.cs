@@ -90,11 +90,14 @@ namespace ND_VariaBULLET
             QualitySettings.vSyncCount = (VSync) ? 1 : 0;
         }
 
-        private void setThrottle()
+         private void setThrottle()
         {
+            if (Time.timeScale == 0)
+                return;
+
             int difference = Math.Max(0, ActiveBullets - MaxBulletUntilThrottle);
-            float throttle = (float) difference * ThrottlePerBullet;
-            Time.timeScale = (throttle > MaxThrottle) ? Time.timeScale : 1 - throttle;
+            float throttle = (float)difference * ThrottlePerBullet;
+            Time.timeScale = (throttle > MaxThrottle) ? 1 - MaxThrottle : 1 - throttle;
         }
 
         public GameObject ExplosionRequest(string name, object sender)
