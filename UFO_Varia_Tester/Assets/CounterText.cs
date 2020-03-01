@@ -3,35 +3,39 @@
  using Prime31;
  using UnityEngine;
  using UnityEngine.UI;
+ using ND_VariaBULLET;
 
 public class CounterText : MonoBehaviour
 {
 
-	private int GoldCount;
+	private float GoldCount;
     public Text GoldCountText;
     private float AtomicMax;
     private float AtomicCount;
     public Text AtomicCountText;
-    private int MaxHealth;
-    private int HP;
+    private float MaxHealth;
+    private float hp;
     public Text HealthCountText;
-    private int MaxSheild;
-    private int SheildCount;
+    private float MaxSheild;
+    private float SheildCount;
     public Text SheildCountText;
+    public GameObject shotCollisionDamage;
 
     void Start()
     {
+
     	GoldCount = 0;
   		AtomicMax = 1000000;
   	 	AtomicCount = 0;
   	 	MaxHealth = 100;
-  	 	HP = 100;
   	 	MaxSheild = 100;
   	 	SheildCount = 100;
   	 	SetGoldCountText();
   	 	SetAtomicCountText();
   	 	SetHealthBarText();
   	 	SetSheildBarText();
+        shotCollisionDamage = GameObject.Find ("ShotCollisionDamage");
+
     }
 
      void OnTriggerEnter(Collider other)
@@ -57,10 +61,10 @@ public class CounterText : MonoBehaviour
      	if (other.gameObject.CompareTag("Health_Crystal"))
      	{
      		Destroy(other.gameObject);
-     		HP = HP + 20; 
-     		if(HP>MaxHealth)
+     		hp = hp + 20; 
+     		if(hp>MaxHealth)
      		{
-     			HP = MaxHealth;
+     			hp = MaxHealth;
      		}
      		SetHealthBarText();
      	}
@@ -86,7 +90,7 @@ public class CounterText : MonoBehaviour
      }
      void SetHealthBarText()
      {
-     	HealthCountText.text = "Health: " + HP.ToString();
+     	HealthCountText.text = "Health: " + hp.ToString();
      }
      void SetSheildBarText()
      {
