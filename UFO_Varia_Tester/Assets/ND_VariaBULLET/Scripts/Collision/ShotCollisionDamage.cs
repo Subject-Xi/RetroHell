@@ -95,5 +95,9 @@ namespace ND_VariaBULLET
                 rend.color = NormalColor;
             }
         }
+        public float getHP() {
+        	return HP;
+
+        }
     }
 }

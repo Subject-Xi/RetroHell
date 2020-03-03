@@ -19,7 +19,8 @@ public class CounterText : MonoBehaviour
     private float MaxSheild;
     private float SheildCount;
     public Text SheildCountText;
-    private GameObject shotCollisionDamage;
+   // private Class shotCollisionDamage;
+   // private GameObject player;
 
     void Start()
     {
@@ -34,7 +35,9 @@ public class CounterText : MonoBehaviour
   	 	SetAtomicCountText();
   	 	SetHealthBarText();
   	 	SetSheildBarText();
-        shotCollisionDamage = GameObject.Find ("ShotCollisionDamage"); 
+        //shotCollisionDamage = class.Find("ShotCollisionDamage");
+//        player = GetComponent<Player>();
+
         //note: trying to pull the "HP" variable from ShotCollisionDamage to show it in my health counter so the player
         //knows how much health they have left
         //But I feel like I've been overthinking it and cant get it to work
@@ -64,6 +67,7 @@ public class CounterText : MonoBehaviour
      	if (other.gameObject.CompareTag("Health_Crystal"))
      	{
      		Destroy(other.gameObject);
+
      		hp = hp + 20; 
      		if(hp>MaxHealth)
      		{
@@ -93,6 +97,7 @@ public class CounterText : MonoBehaviour
      }
      void SetHealthBarText()
      {
+     	//player.ShotCollisionDamage.getHP();
      	HealthCountText.text = "Health: " + hp.ToString();
      }
      void SetSheildBarText()
