@@ -19,7 +19,7 @@ public class CounterText : MonoBehaviour
     private float MaxSheild;
     private float SheildCount;
     public Text SheildCountText;
-    public GameObject shotCollisionDamage;
+    private GameObject shotCollisionDamage;
 
     void Start()
     {
@@ -34,7 +34,10 @@ public class CounterText : MonoBehaviour
   	 	SetAtomicCountText();
   	 	SetHealthBarText();
   	 	SetSheildBarText();
-        shotCollisionDamage = GameObject.Find ("ShotCollisionDamage");
+        shotCollisionDamage = GameObject.Find ("ShotCollisionDamage"); 
+        //note: trying to pull the "HP" variable from ShotCollisionDamage to show it in my health counter so the player
+        //knows how much health they have left
+        //But I feel like I've been overthinking it and cant get it to work
 
     }
 
