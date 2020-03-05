@@ -13,31 +13,32 @@ public class CounterText : MonoBehaviour
     private float AtomicMax;
     private float AtomicCount;
     public Text AtomicCountText;
+    private float Health;
     private float MaxHealth;
-    private float hp;
     public Text HealthCountText;
     private float MaxSheild;
     private float SheildCount;
     public Text SheildCountText;
-   // private Class shotCollisionDamage;
+    private ShotCollisionDamage shotCollisionDamage;
+    //private float Health = shotCollisionDamage.getHP();
    // private GameObject player;
 
     void Start()
     {
-
+    	//Health = shotCollisionDamage.getHP();
     	GoldCount = 0;
   		AtomicMax = 1000000;
   	 	AtomicCount = 0;
-  	 	MaxHealth = 100;
+  	 	MaxHealth = Health;
   	 	MaxSheild = 100;
   	 	SheildCount = 100;
   	 	SetGoldCountText();
   	 	SetAtomicCountText();
-  	 	SetHealthBarText();
   	 	SetSheildBarText();
+  	 	SetHealthBarText();
+
         //shotCollisionDamage = class.Find("ShotCollisionDamage");
 //        player = GetComponent<Player>();
-
         //note: trying to pull the "HP" variable from ShotCollisionDamage to show it in my health counter so the player
         //knows how much health they have left
         //But I feel like I've been overthinking it and cant get it to work
@@ -64,17 +65,6 @@ public class CounterText : MonoBehaviour
      			AtomicCount = AtomicMax;
      		}
      	}
-     	if (other.gameObject.CompareTag("Health_Crystal"))
-     	{
-     		Destroy(other.gameObject);
-
-     		hp = hp + 20; 
-     		if(hp>MaxHealth)
-     		{
-     			hp = MaxHealth;
-     		}
-     		SetHealthBarText();
-     	}
      	if (other.gameObject.CompareTag("Sheild_Crystal"))
      	{
      		Destroy(other.gameObject);
@@ -85,6 +75,18 @@ public class CounterText : MonoBehaviour
      		}
      		SetSheildBarText();
      	}
+     	if (other.gameObject.CompareTag("Health_Crystal"))
+     	{
+     		Destroy(other.gameObject);
+
+     		Health = Health + 20; 
+     		if(Health>MaxHealth)
+     		{
+     			Health = MaxHealth;
+     		}
+     		SetHealthBarText();
+     	}
+
      }
 
      void SetGoldCountText()
@@ -95,14 +97,15 @@ public class CounterText : MonoBehaviour
      {
      	AtomicCountText.text = "Atomic Crystals: " + AtomicCount.ToString();
      }
-     void SetHealthBarText()
-     {
-     	//player.ShotCollisionDamage.getHP();
-     	HealthCountText.text = "Health: " + hp.ToString();
-     }
      void SetSheildBarText()
      {
      	SheildCountText.text = "Sheild: " + SheildCount.ToString();
+     }
+     void SetHealthBarText()
+     {
+     	Health = shotCollisionDamage.getHP();
+     	//player.ShotCollisionDamage.getHP();
+     	HealthCountText.text = "Health: " + Health.ToString();
      }
 }
 
