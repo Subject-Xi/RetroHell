@@ -11,23 +11,31 @@ namespace ND_VariaBULLET
         private Timer DissipateTimer = new Timer(0);
 
         [Header("Colorize Settings")]
+
         [Range(0, 100)]
+        [Tooltip("Sets delay in frames before onset of opacity reduction (dissipate).")]
         public int DissipateDelay;
 
         [Range(0, 200)]
+        [Tooltip("Sets the speed at which opacity reduces (dissipates).")]
         public int DissipateSpeed;
         private float dissipateAccumulator;
 
+        [Tooltip("Sets color indexes to loop through which creates a color shifting effect.")]
         public Color[] ColorShift;
         private int shiftIndex;
         private int shiftDir = 1;
 
         [Range(0, 100)]
+        [Tooltip("Sets the cycling speed for colors set in ColorShift.")]
         public int colorShiftSpeed;
+
+        [Tooltip("Starts with a random start color index set in ColorShift.")]
         public bool randomStartColor;
         private float shiftAccumulator;
 
         [Range(0.1f, 1f)]
+        [Tooltip("Sets the starting opacity for this shot.")]
         public float Opacity = 1;
 
         private bool staticColor;

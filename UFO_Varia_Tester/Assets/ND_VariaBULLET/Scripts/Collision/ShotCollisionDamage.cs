@@ -11,15 +11,24 @@ namespace ND_VariaBULLET
 {
     public class ShotCollisionDamage : ShotCollision, IShotCollidable
     {
+        [Tooltip("Sets the name of the explosion prefab to be instantiated when HP = 0.")]
         public string DeathExplosion;
+
+        [Tooltip("Health Points. Reduces according to incoming IDamager.DMG value upon collision.")]
         public float HP = 10;
 
         [Range(0.1f, 8f)]
+        [Tooltip("Changes the size of the last explosion (when HP = 0).")]
         public float FinalExplodeFactor = 2;
+
+        [Tooltip("Enables indicating damage by flickering color (via DamageColor setting) when HP is reducing.")]
         public bool DamageFlicker;
 
         [Range(5, 40)]
+        [Tooltip("Sets the duration frames for the DamageFlicker effect upon collision.")]
         public int FlickerDuration = 6;
+
+        [Tooltip("Sets the color the object flickers to when HP is reducing and DamageFlicker is enabled.")]
         public Color DamageColor;
         private Color NormalColor;
         private SpriteRenderer rend;
@@ -34,7 +43,7 @@ namespace ND_VariaBULLET
         {
             if (CollisionFilter.collisionAccepted(sender.gameObject.layer, CollisionList))
             {
-                setDamage(LaserExplosion, sender.damage);
+                setDamage(sender.damage);
                 CollisionFilter.setExplosion(LaserExplosion, ParentExplosion, this.transform, new Vector2(sender.point.x, sender.point.y), 0, this);
                 yield return setFlicker();
             }
@@ -44,13 +53,13 @@ namespace ND_VariaBULLET
         {
             if (CollisionFilter.collisionAccepted(collision.gameObject.layer, CollisionList))
             {
-                setDamage(BulletExplosion, collision.gameObject.GetComponent<IDamager>().DMG);
+                setDamage(collision.gameObject.GetComponent<IDamager>().DMG);
                 CollisionFilter.setExplosion(BulletExplosion, ParentExplosion, this.transform, collision.contacts[0].point, 0, this);
                 yield return setFlicker();
             }
         }
 
-        protected void setDamage(string shotType, float damage)
+        protected void setDamage(float damage)
         {
             HP -= damage;
             if (HP <= 0)
@@ -94,10 +103,6 @@ namespace ND_VariaBULLET
 
                 rend.color = NormalColor;
             }
-        }
-        public float getHP() {
-        	return HP;
-
         }
     }
 }

@@ -9,11 +9,19 @@ namespace ND_VariaBULLET
 {
     public class Explosion : MonoBehaviour, IRePoolable
     {
+        [Tooltip("Sets animation frames for this explosion.")]
         public Sprite[] Frames;
-        public int FrameSkip;       
+
+        [Tooltip("Sets interval for changing frames. Lower number = faster animation.")]
+        public int FrameSkip;
+
+        [Tooltip("Turns off skipped frames, producing a flickering effect.")]
         public bool FlickerSkipFrames;
 
+        [Tooltip("Sets the audio clip this explosion plays when instantiated.")]
         public AudioClip SoundFX;
+
+        [Tooltip("Prevents being repooled back to GlobalShotManager (special case).")]
         public bool PreventRePool;
 
         private BasicAnimation anim;

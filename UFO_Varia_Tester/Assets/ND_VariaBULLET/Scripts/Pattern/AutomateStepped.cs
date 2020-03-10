@@ -9,20 +9,33 @@ using UnityEngine;
 namespace ND_VariaBULLET
 {
     public class AutomateStepped : AutomateBase
-    {    
+    {
+        [Tooltip("Sets time interval for moving from one step to the next. [higher number = longer delay].")]
         public float Interval;
+
+        [Tooltip("Sets values as a series of steps for the control being modified.")]
         public float[] Steps;
+
+        [Tooltip("Takes precedence over the controller's TriggerAutoFire, instead syncing shot triggering to each step change.")]
         public bool AutoSyncTrigger;
+
+        [Tooltip("Sets the amount of triggers before AutoSyncTrigger no longer triggers shots. [0 = infinite].")]
         public int TriggerPasses;
         private int triggersPassed = 1;
 
         private int index;
         private bool isFwd = true;
 
-        protected override void Start()
+        protected override void Awake()
         {
             accumulator = Interval + 1;
-            base.Start();
+            base.Awake();
+
+            if (AutoSyncTrigger && pattern.TriggerAutoFire)
+            {               
+                Utilities.Warn("BasePattern.TriggerAutoFire conflicts with Stepped Automator.AutoSyncTrigger. Disabling controller's BasePattern.TriggerAutoFire setting. If you want to use TriggerAutoFire as the main trigger instead, turn off the Stepped Automator trigger", this.transform.parent.parent);
+                pattern.TriggerAutoFire = false;
+            }
         }
 
         void Update()

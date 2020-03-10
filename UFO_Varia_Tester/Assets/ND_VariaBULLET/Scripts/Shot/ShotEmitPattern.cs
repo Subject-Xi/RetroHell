@@ -11,6 +11,8 @@ namespace ND_VariaBULLET
     public class ShotEmitPattern : ShotNonPhysics
     {
         [Header("Emission Setting")]
+
+        [Tooltip("Ensures that child controller fires on only one frame.")]
         public bool shootOnce = true;
         private BasePattern childController;
 
@@ -23,14 +25,10 @@ namespace ND_VariaBULLET
 
         public override void Update()
         {
-            if (shootOnce)
-            {
-                OnEventTimerDoOnce(o => {
-                    childController.TriggerAutoFire = false;
-                }, 1);
-            }
-
             base.Update();
+
+            if (shootOnce)
+                childController.TriggerAutoFire = false;
         }
 
         protected override void setSprite(SpriteRenderer sr)

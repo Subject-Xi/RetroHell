@@ -79,6 +79,7 @@
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\CoinOnDestroyed.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\ColorLerp.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\CubePath.cs" />
+     <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\DifficultySelect.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\FlickerBG.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\GlobalSlowDown.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\OmniShooterSwitcher.cs" />
@@ -87,6 +88,7 @@
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\ScrollBG.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\TerrainBuilder.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\TurretController.cs" />
+     <Compile Include="Assets\ND_VariaBULLET\Demo\Scripts\TurretFollower.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Collision\CollisionFilter.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Collision\DamagerBody.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Collision\Explosion.cs" />
@@ -106,6 +108,7 @@
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\FireBase.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\FireBullet.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\FireExpanding.cs" />
+     <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\GlobalShotBank.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\GlobalShotManager.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotAccelerating.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotBase.cs" />
@@ -116,6 +119,7 @@
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotBouncyPhysics.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotBullet.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotBurstPhysics.cs" />
+     <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotCollFlux.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotEmitPattern.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotExploding.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotGravitational.cs" />
@@ -131,6 +135,7 @@
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotReAngle.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Shot\ShotSpeedWave.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Utility\BasicAnimation.cs" />
+     <Compile Include="Assets\ND_VariaBULLET\Scripts\Utility\CoroutineExt.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Utility\ForceGlobalShotManager.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Utility\HomingCalc.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Utility\ObjectPool.cs" />

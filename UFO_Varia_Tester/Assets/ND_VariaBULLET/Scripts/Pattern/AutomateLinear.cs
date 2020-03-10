@@ -10,8 +10,13 @@ namespace ND_VariaBULLET
 {
     public class AutomateLinear : AutomateBase
     {
+        [Tooltip("Sets the initial value for the control being modified.")]
         public float From;
+
+        [Tooltip("Sets the end value for the control being modified.")]
         public float To;
+
+        [Tooltip("Sets the speed at which values gradually modify between From and To.")]
         public float Speed;
 
         void Update()

@@ -8,12 +8,20 @@ using UnityEngine;
 
 namespace ND_VariaBULLET
 {
-    public class ShotBullet : ShotBase
-    {
+    public class ShotBullet : ShotCollFlux
+    {       
         [Header("Collision Settings")]
+
+        [Tooltip("Sets which collision layers can produce explosions when this shot collides with them.")]
         public string[] CollisionList;
+
+        [Tooltip("Sets the name of the explosion prefab that's instantiated upon collision. [Note: must also be pre-loaded in GlobalShotManager.ExplosionPrefabs].")]
         public string Explosion;
+
+        [Tooltip("Sets whether or not explosion moves with the object it collided with or remains at point of impact.")]
         public bool ParentExplosion;
+
+        [Tooltip("Sets rotation of explosion relative to the angle the shot was travelling.")]
         public bool ExplosionRotation;
 
         [HideInInspector]
@@ -42,6 +50,7 @@ namespace ND_VariaBULLET
 
         public virtual void LateUpdate()
         {
+            //Necessary to run in LateUpdate for producing accurate directional tracking
             newPosition = transform.position;
             Direction = setDirection(lastPosition, newPosition);
         }

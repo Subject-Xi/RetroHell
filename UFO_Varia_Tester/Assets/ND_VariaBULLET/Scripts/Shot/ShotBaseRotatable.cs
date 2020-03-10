@@ -8,13 +8,18 @@ namespace ND_VariaBULLET
 {
     public class ShotBaseRotatable : ShotBaseAnimatable
     {
+        [Tooltip("Sets this shot's starting rotation to a random value.")]
         public bool RandomStartRotation;
 
         [Range(0, 60)]
+        [Tooltip("Sets the base rotation speed for this shot.")]
         public float rotationSpeed;
 
         [Range(0, 10)]
+        [Tooltip("Sets a random +/- range to base rotationSpeed.")]
         public float rotationSpeedRange;
+
+        [Tooltip("Sets the direction that this shot rotates.")]
         public RotationDir RotationDirection;
         private float rotation;
 

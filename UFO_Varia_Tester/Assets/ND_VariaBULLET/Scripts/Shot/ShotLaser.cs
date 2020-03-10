@@ -10,14 +10,24 @@ namespace ND_VariaBULLET
     public class ShotLaser : ShotBase
     {
         [Range(1,30)]
+        [Tooltip("Sets the amount of hits produced when collides with object that has ShotCollisionDamage script attached. [higher number = more collisions].")]
         public int HitsPerSecond;
 
+        [Tooltip("Sets the base laser behavior as always attached to the emitter (continuous) or detachable (packet).")]
         public LaserExpression expressionType = LaserExpression.continuous;
 
         [Header("Animation Settings")]
+
+        [Tooltip("Animation frames for the start origin laser segment.")]
         public Sprite[] OriginImg;
-        public Sprite[] MainImg; 
+
+        [Tooltip("Animation frames for the middle main laser segment.")]
+        public Sprite[] MainImg;
+
+        [Tooltip("Animation frames for the end tip laser segment.")]
         public Sprite[] TipImg;
+
+        [Tooltip("Animation frames for the end blast laser segment when colliding.")]
         public Sprite[] BlastImg;
 
         private BasicAnimation originAnim;
@@ -30,13 +40,17 @@ namespace ND_VariaBULLET
         private GameObject tipGo;
 
         [Range(0, 10)]
+        [Tooltip("Sets interval for changing frames. Lower number = faster animation.")]
         public int FrameSkip;
 
         [Header("Collision Settings")]
+
         [Range(.1f, .9f)]
+        [Tooltip("Decreases collision thickness of the laser.")]
         public float CollisionThickness = 0.5f;
 
         [Range(0.1f, 1)]
+        [Tooltip("Adjusts the range around the tip of the laser where collision occurs.")]
         public float CollisionTipZone = 0.5f;
 
         private float ppu;

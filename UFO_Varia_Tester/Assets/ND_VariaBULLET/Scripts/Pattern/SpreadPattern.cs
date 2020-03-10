@@ -13,11 +13,14 @@ namespace ND_VariaBULLET
     public class SpreadPattern : BasePattern
     {
         [Range(-80, 80)]
+        [Tooltip("Shifts emitters on Y-axis.")]
         public float SpreadYAxis;
 
         [Range(-80, 80)]
+        [Tooltip("Shifts emitters on X-axis.")]
         public float SpreadXAxis;
 
+        [Tooltip("Sets base algorithm for creating emitter placement.")]
         public PatternSelect patternSelect = PatternSelect.Radial;
 
         [SerializeField]
@@ -25,14 +28,27 @@ namespace ND_VariaBULLET
 
         public override void LateUpdate()
         {
-            if (FreezeEdits)
-                return;
+            if (!FreezeEdits)
+            {
+                presetCheck();
+                base.LateUpdate();
 
-            presetCheck();
-            base.LateUpdate();
+                autoSetRadius();
+                setAllPositions();
+            }
 
-            autoSetRadius();
-            setAllPositions();
+            masterTriggerCheck();
+        }
+
+        private void masterTriggerCheck()
+        {
+            if (!Master || Utilities.IsEditorMode()) return;
+
+            if (childControllers.Length > 1)
+            {
+                foreach (var child in childControllers)
+                    child.TriggerAutoFire = TriggerAutoFire;
+            }
         }
 
         private void setPositionsStack()
@@ -72,13 +88,13 @@ namespace ND_VariaBULLET
                 Emitters[i].transform.localScale = new Vector3(1, 1, 1); //for maintaining ratio if using nested emitters/points
 
                 foreach (Transform child in Emitters[i].transform)
-                {                
+                {
                     float tilt = 0;
 
-                    if (i >= (float)Emitters.Count / 2)
-                        tilt = Pitch * -1;
-                    else if (i < Emitters.Count / 2 || Emitters.Count == 1)
-                        tilt = Pitch;
+                    if (i < Emitters.Count / 2 || Emitters.Count == 1 || UniDirectionPitch)
+                        tilt = Pitch + FireScripts[i].LocalPitch;
+                    else if (i >= (float)Emitters.Count / 2)
+                        tilt = (Pitch + FireScripts[i].LocalPitch) * -1;
 
                     child.localPosition = new Vector2(SpreadRadius, 0);
                     child.localRotation = Quaternion.Euler(0, 0, tilt);
@@ -105,10 +121,10 @@ namespace ND_VariaBULLET
                 {               
                     float tilt = 0;
 
-                    if (i >= (float)Emitters.Count / 2)
-                        tilt = Pitch * -1;
-                    else if (i < Emitters.Count / 2 || Emitters.Count == 1)
-                        tilt = Pitch;
+                    if (i < Emitters.Count / 2 || Emitters.Count == 1 || UniDirectionPitch)
+                        tilt = Pitch + FireScripts[i].LocalPitch;
+                    else if (i >= (float)Emitters.Count / 2)
+                        tilt = (Pitch + FireScripts[i].LocalPitch) * -1;
 
                     child.localPosition = new Vector2(SpreadRadius, 0);
                     child.localRotation = Quaternion.Euler(0, 0, tilt);
@@ -159,7 +175,7 @@ namespace ND_VariaBULLET
 
         private void setParentRotation()
         {
-            if (transform.parent.parent != null && transform.parent.parent.GetComponent<FireBase>() == null)
+            if (transform.parent.parent != null && parentPoint == null)
                 transform.parent.parent.localRotation = Quaternion.Euler(0, 0, ParentRotation);
             else
             {

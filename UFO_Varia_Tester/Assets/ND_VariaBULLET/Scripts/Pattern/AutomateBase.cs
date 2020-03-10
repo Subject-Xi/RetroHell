@@ -12,8 +12,13 @@ namespace ND_VariaBULLET
     [RequireComponent(typeof(BasePattern))]
     public abstract class AutomateBase : MonoBehaviour
     {
+        [Tooltip("Sets which control point this automator modifies in the controller.")]
         public ControlType Destination;
+
+        [Tooltip("Sets the behavior of the control modification.")]
         public ControlBehavior Behavior;
+
+        [Tooltip("Sets a delay in frames before control modification starts.")]
         public int InitialDelay = 0;
         protected Timer delay;
 
@@ -23,7 +28,7 @@ namespace ND_VariaBULLET
         protected SpreadPattern pattern;
         protected float accumulator;
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             delay = new Timer(0);
             pattern = GetComponent<SpreadPattern>();

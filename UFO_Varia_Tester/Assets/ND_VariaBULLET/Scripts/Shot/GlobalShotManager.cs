@@ -12,8 +12,27 @@ using System;
 namespace ND_VariaBULLET
 {
     public class GlobalShotManager : MonoBehaviour, IPooler
-    {
+    {       
+        public Transform StaticCollTransform { get; set; }
+        public Camera MainCam { get; private set; }
+
+        [Header("Static Collision Source")]
+
+        [SerializeField]
+        [Tooltip("Sets the method by which static collider object is found in the scene. [Object becomes the collision source for shots with CollFlux enabled].")]
+        private StaticCollRef FindStaticCollBy;
+
+        [SerializeField]
+        [Tooltip("Sets the name of the static collider object that FindStaticCollBy looks for.")]
+        private string StaticColl;
+
+        [Range(0.5f, 99)]
+        [Tooltip("Sets the radius in units within which the static collider object dynamically enables colliders of surrounding shots that have CollFlux enabled.")]
+        public float StaticCollRadius = 5;
+
+        [Tooltip("Enables using demo version GlobalShotManager. Should only be used by VariaBULLET2D Demo Scenes.")]
         public static bool DemoMode;
+
         private static GlobalShotManager _instance;
         public static GlobalShotManager Instance
         {
@@ -29,11 +48,34 @@ namespace ND_VariaBULLET
             }
         }
 
-        [Range(0, 60)] public int TestFrameRate = 0;
+
+        [Header("FPS Testing")]
+
+        [Range(0, 60)]
+        [Tooltip("Sets Target Framerate. [0 = unlocked].")]
+        public int TestFrameRate = 0;
+
+        [Tooltip("Enables VSync.")]
         public bool VSync;
 
-        [Range(0.1f, 5)] public float SpeedScale = 1;
 
+        [Header("Global Shot Scaling")]
+
+        [Range(0.1f, 5)]
+        [Tooltip("Sets global speed scale for all shots. [individual shots can ingore via IgnoreGlobalSpeedScale field].")]
+        public float SpeedScale = 1;
+
+        [Range(0.1f, 5)]
+        [Tooltip("Sets global rate scale for all shot emitters. [individual emitters can ingore via IgnoreGlobalRateScale field].")]
+        public float RateScale = 1;
+
+        [Tooltip("Sets whether or not RateScale automatically adjust to that or SpeedScale.")]
+        public bool LockRateToSpeed;
+
+
+        [Header("Explosion Pool")]
+
+        [Tooltip("Sets explosion prefabs which are requested by collision scripts.")]
         public GameObject[] ExplosionPrefabs;
 
         public bool PoolingEnabled
@@ -41,23 +83,92 @@ namespace ND_VariaBULLET
             get { return true; }
             set { PoolingEnabled = value; } //necessary to satisfy IPooler. Pooling can only be true in this case
         }
+       
+        [Range(1, 100)]
+        [Tooltip("Limits the size of pre-pooled explosions for each explosion to this number.")]
+        public int PoolSize;
 
-        [Range(1, 100)] public int PoolSize;
 
-        public int ActiveBullets { get; set; }
+        [Header("Throttle Emulation")]
 
+        [Tooltip("Enables emulation of CPU throttling, resulting in deterministic slowdown when MaxBulletsUntilThrottle is reached.")]
         public bool EmulateCPUThrottle;
+
+        [Tooltip("Sets the amount of throttling (slowdown) each bullets creates when EmulateCPUThrottle is used.")]
         public float ThrottlePerBullet;
 
-        [Range(0.1f, 0.9f)] public float MaxThrottle;
+        [Range(0.1f, 0.9f)]
+        [Tooltip("Sets a limit on the max amount of throttling (slowdown) the engine can emulate as a percentage. [higher = slower].")]
+        public float MaxThrottle;
+
+        [Tooltip("Sets the threshold of total active bullets at which begins engine throttling (slowdown).")]
         public int MaxBulletUntilThrottle;
 
-        [Range(1, 1000)] public float OutBoundsRange = 260;
+
+        [Header("Global Boundary")]
+
+        [Range(1, 1000)]
+        [Tooltip("Sets the range outside of the camera view, where shots are to be destroyed or re-pooled. [larger number = farther from camera bounds]")]
+        public float OutBoundsRange = 260;
+
+        public int ActiveBullets { get; set; }
 
         private Dictionary<string, ObjectPool> explosionPool = new Dictionary<string, ObjectPool>();
         private Dictionary<string, AudioSource> sfxPool = new Dictionary<string, AudioSource>();
 
         void Awake()
+        {
+            GlobalShotBank.Instance.ForceInstantiate();
+
+            getStaticColl();
+            initExplosionPool();
+
+            MainCam = Camera.main;
+        }
+
+        public void Update()
+        {
+            if (TestFrameRate > 0)
+                setFrameRate();
+
+            if (EmulateCPUThrottle)
+                setThrottle();
+
+            if (LockRateToSpeed)
+                RateScale = SpeedScale;
+        }
+
+
+        private void setFrameRate()
+        {
+            Application.targetFrameRate = TestFrameRate;
+            QualitySettings.vSyncCount = (VSync) ? 1 : 0;
+        }
+
+        private void setThrottle()
+        {
+            int difference = Math.Max(0, ActiveBullets - MaxBulletUntilThrottle);
+            float throttle = (float) difference * ThrottlePerBullet;
+            Time.timeScale = (throttle > MaxThrottle) ? Time.timeScale : 1 - throttle;
+        }
+
+        private void getStaticColl()
+        {
+            if (!String.IsNullOrEmpty(StaticColl))
+            {
+                GameObject gO;
+
+                if (FindStaticCollBy == StaticCollRef.Name)
+                    gO = GameObject.Find(StaticColl);
+                else
+                    gO = GameObject.FindGameObjectWithTag(StaticColl);
+
+                if (gO != null)
+                    StaticCollTransform = gO.transform;
+            }
+        }
+
+        private void initExplosionPool()
         {
             foreach (GameObject explosion in ExplosionPrefabs)
             {
@@ -72,32 +183,6 @@ namespace ND_VariaBULLET
                     sfxPool.Add(explosion.name, soundFX);
                 }
             }
-        }
-
-        public void Update()
-        {
-            if (TestFrameRate > 0)
-                setFrameRate();
-
-            if (EmulateCPUThrottle)
-                setThrottle();
-        }
-
-
-        private void setFrameRate()
-        {
-            Application.targetFrameRate = TestFrameRate;
-            QualitySettings.vSyncCount = (VSync) ? 1 : 0;
-        }
-
-         private void setThrottle()
-        {
-            if (Time.timeScale == 0)
-                return;
-
-            int difference = Math.Max(0, ActiveBullets - MaxBulletUntilThrottle);
-            float throttle = (float)difference * ThrottlePerBullet;
-            Time.timeScale = (throttle > MaxThrottle) ? 1 - MaxThrottle : 1 - throttle;
         }
 
         public GameObject ExplosionRequest(string name, object sender)
@@ -145,6 +230,12 @@ namespace ND_VariaBULLET
         public GameObject RemoveFromPool(int index)
         {
             throw new NotImplementedException();
+        }
+
+        public enum StaticCollRef
+        {
+            Name,
+            Tag
         }
     }
 }

@@ -10,18 +10,21 @@ namespace ND_VariaBULLET
     public class ShotBaseAnimatable : ShotBullet
     {
         [Header("Animation Settings")]
-        public Sprite[] Frames;
-        public int FrameSkip;
-        public bool RandomStartFrame;
-        private BasicAnimation anim;
 
-        protected SpriteRenderer rend;
+        [Tooltip("Sets optional animation frames for this shot.")]
+        public Sprite[] Frames;
+
+        [Tooltip("Sets interval for changing frames. [Lower number = faster animation].")]
+        public int FrameSkip;
+
+        [Tooltip("Sets initial animation frame randomly.")]
+        public bool RandomStartFrame;
+
+        private BasicAnimation anim;
 
         public override void InitialSet()
         {
             base.InitialSet();
-
-            rend = GetComponent<SpriteRenderer>();
 
             if (RandomStartFrame)
             {

@@ -3,8 +3,17 @@ sceneSetups:
   isLoaded: 0
   isActive: 0
 - path: Assets/Scenes/BulletTesting.unity
-  isLoaded: 1
-  isActive: 1
+  isLoaded: 0
+  isActive: 0
+- path: Assets/EnemyTesting.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/ND_VariaBULLET/Demo/Scenes/Misc/BigBossBattle.unity
+  isLoaded: 0
+  isActive: 0
 - path: Assets/Pickup_Testing.unity
   isLoaded: 0
   isActive: 0
+- path: Assets/ND_VariaBULLET/Demo/Scenes/BulletHell/BulletHellThrottleTest.unity
+  isLoaded: 1
+  isActive: 1

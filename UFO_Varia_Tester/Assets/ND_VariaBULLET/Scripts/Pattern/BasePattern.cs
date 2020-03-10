@@ -12,24 +12,44 @@ namespace ND_VariaBULLET
 {
     public abstract class BasePattern : MonoBehaviour
     {
-        [SerializeField]
-        private AutoSetOrigin origin;
+        [Tooltip("Sets this controller as master shot trigger, slaving all child controller triggers to it.")]
+        public bool Master; 
 
+        [SerializeField]
+        [Tooltip("Sets anchor transform position relative to sprite in parent Origin. Manual requires setting in Origin parent transform directly.")]
+        private AutoSetOrigin origin;
+        private AutoSetOrigin prevOrigin;
+
+        [Tooltip("Sets the command type that triggers shots for this controller.")]
         public CommandType FireCommand;
+
+        [Tooltip("Sets the command key that triggers the firing if command type is set to Button type.")]
         public KeyCode CommandKey = KeyCode.Space;
 
-        [Range(2, 999)]
+        [Range(2, 99999)]
+        [Tooltip("Sets the duration that shot is held when triggered and command type is set to AutoHold type.")]
         public float AutoHoldDuration = 45;
+
+        [Tooltip("Triggers shot firing when command type is set to Automatic type.")]
         public bool TriggerAutoFire = false;
 
+        [Range(1, 600)]
+        [Tooltip("Delays TriggerAutoFire on Start by n frames when set in inspector.")]
+        public int TriggerDelay = 10;
+
+        [Tooltip("Disables realtime changes to emitter pattern characteristics.")]
         public bool FreezeEdits = false;
 
         [Range(0, 40)]
         public int EmitterAmount = 0;
+
+        [Tooltip("Sets default emitter type (bullet or laser) when adding mew emitters.")]
         public PrefabType DefaultEmitter;
         protected List<GameObject> Emitters;
         protected List<GameObject> EmittersCached;
+        protected List<FireBase> FireScripts;
 
+        [Tooltip("Sets the physics/sprite layers that shots triggered by this controller belong to.")]
         public SortLayerName sortLayer;
         private SortLayerName prevLayer;
         private static int sortOrder = 9999;
@@ -40,38 +60,53 @@ namespace ND_VariaBULLET
 
         public PointDisplayType pointDisplay = PointDisplayType.Always;
 
+        [Header("Emission Pattern")]
+
         [Range(-80, 80)]
+        [Tooltip("Sets the shot exit point for all child emitters.")]
         public float ExitPointOffset = 1f;
 
         [Range(-360, 360)]
+        [Tooltip("Sets rotation for the top-level parent.")]
         public float ParentRotation;
 
         [Range(-180, 180)]
+        [Tooltip("Sets rotation for all child emitters.")]
         public float Pitch;
 
+        [Tooltip("Sets pitch as uni-directional or bi-directional rotation.")]
+        public bool UniDirectionPitch;
+
         [Range(-360, 360)]
+        [Tooltip("Sets the degrees of separation between child emitters.")]
         public float SpreadDegrees;
 
         [Range(-20, 20)]
+        [Tooltip("Sets the central radius between child emitters")]
         public float SpreadRadius;
-        
+
+        [Tooltip("Keeps emitters fixed to anchor point regardless of radius size.")]
         public bool AutoCompRadius;
 
         [SerializeField]
+        [Tooltip("Sets radius relative to sprite in top-level parent, if present.")]
         protected bool AutoRadiusToSprite;
 
         [Range(-360, 360)]
+        [Tooltip("Sets central rotation for emitter group.")]
         public float CenterRotation;
 
+        [Tooltip("Automatically centers emitter group.")]
         public bool autoCenter = true;
 
-        void delayOnAwake()
-        {
-            TriggerAutoFire = true;
-        }
+        protected BasePattern[] childControllers;
+        protected FireBase parentPoint;
 
-        public void Awake()
+        public void Start()
         {
+            initSlaveTriggers();
+            linkEmittersAtLaunch();
+            nestedControllerCheck();
             setIndicatorDisplay(true);
 
             if (!Utilities.IsEditorMode())
@@ -79,18 +114,39 @@ namespace ND_VariaBULLET
                 if (TriggerAutoFire)
                 {
                     TriggerAutoFire = false;
-                    Invoke("delayOnAwake", 0.12f);
+                    StartCoroutine(CoroutineExt.WaitForFramesDo(TriggerDelay, () => TriggerAutoFire = true));
                 }
             }
         }
 
         public virtual void LateUpdate()
         {
-            linkEmittersAtLaunch();
             setEmitters();          
             setOriginPoint();
             setIndicatorDisplay(false);
             checkSortLayerChanged();
+        }
+
+        private void initSlaveTriggers()
+        {
+            if (!Master || Utilities.IsEditorMode()) return;
+
+            childControllers = GetComponentsInChildren<BasePattern>();
+
+            for (int i = 1; i < childControllers.Length; i++)
+            {
+                childControllers[i].FireCommand = FireCommand;
+                childControllers[i].CommandKey = CommandKey;
+                childControllers[i].AutoHoldDuration = AutoHoldDuration;
+            }
+        }
+
+        private void nestedControllerCheck()
+        {
+            var parentPointCheck = transform.parent.parent.GetComponent<FireBase>();
+
+            if (parentPointCheck != null)
+                parentPoint = parentPointCheck;
         }
 
         public void setEmitters()
@@ -106,6 +162,8 @@ namespace ND_VariaBULLET
                 newEmitter.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingLayerName = this.sortLayer.ToString();
                 newEmitter.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingOrder = sortOrder += 10;
                 Emitters.Add(newEmitter);
+
+                FireScripts.Add(newEmitter.transform.GetChild(0).GetComponent<FireBase>());
             };
             Action<string, bool, GameObject, List<GameObject>, List<GameObject>> manageCache = (name, isActive, emit, emitList1, emitList2) => {
                 emit.name = name;
@@ -118,6 +176,7 @@ namespace ND_VariaBULLET
             {
                 Emitters = new List<GameObject>();
                 EmittersCached = new List<GameObject>();
+                FireScripts = new List<FireBase>();
 
                 for (int i = 0; i < EmitterAmount; i++)
                     addNewEmitter();
@@ -172,11 +231,14 @@ namespace ND_VariaBULLET
             {
                 Emitters = new List<GameObject>();
                 EmittersCached = new List<GameObject>();
+                FireScripts = new List<FireBase>();
 
                 foreach (Transform child in this.transform)
                 {
                     if (child.parent == this.transform)
                     {
+                        FireScripts.Add(child.transform.GetChild(0).GetComponent<FireBase>());
+
                         if (child.gameObject.activeSelf)
                             Emitters.Add(child.gameObject);
                         else
@@ -188,13 +250,14 @@ namespace ND_VariaBULLET
 
         private void setOriginPoint()
         {
-            if (origin == AutoSetOrigin.Manual)
+            if (origin == prevOrigin || origin == AutoSetOrigin.Manual)
                 return;
 
             Transform originPoint = transform.parent;
             Transform mainSource = originPoint.parent;
+            SpriteRenderer mainRend = mainSource.GetComponent<SpriteRenderer>();
 
-            if (mainSource == null || mainSource.GetComponent<SpriteRenderer>().sprite == null)
+            if (mainSource == null || mainRend == null || mainRend.sprite == null)
                 return;
 
             float x = 0;
@@ -205,6 +268,7 @@ namespace ND_VariaBULLET
                 x = mainSource.GetComponent<SpriteRenderer>().sprite.bounds.center.x;
 
             originPoint.localPosition = new Vector2(x, 0);
+            prevOrigin = origin;
         }
 
         private void setIndicatorDisplay(bool forceOnStart)
@@ -248,7 +312,10 @@ namespace ND_VariaBULLET
             if (EmittersCached.Count == 0) { Utilities.Warn("No cached Emitters found.", this, transform.parent.parent); return; }
 
             foreach (GameObject emitter in EmittersCached)
+            {
+                FireScripts.Remove(emitter.transform.GetChild(0).GetComponent<FireBase>());
                 DestroyImmediate(emitter.gameObject);
+            }
 
             EmittersCached = new List<GameObject>();
             sortOrder = 9999;
@@ -257,6 +324,7 @@ namespace ND_VariaBULLET
         public void cloneFirstEmitter()
         {
             if (EmitterAmount <= 1) { Utilities.Warn("Not enough Emitters to clone to (2 or more required).", this, transform.parent.parent); return; }
+            if (FreezeEdits) { Utilities.Warn("Cannot clone while edits are frozen. Disable FreezeEdits temporarily in order to use clone procedure.", this, transform.parent.parent); return; }
 
             Action<FireBase> copyProcess = (FireBase src) =>
             {
@@ -270,8 +338,8 @@ namespace ND_VariaBULLET
                     targ.LocalOffset = src.LocalOffset;
                     targ.makeNodeOnly = src.makeNodeOnly;
                     targ.SpriteColor = src.SpriteColor;
+                    targ.LocalPitch = src.LocalPitch;
 
-                    
                     if (src.GetType() == typeof(FireBullet)) //extended copying in case of FireBullet type emitter
                     {
                         FireBullet srcXT = src as FireBullet;
@@ -279,12 +347,15 @@ namespace ND_VariaBULLET
 
                         targXT.SpriteOverride = srcXT.SpriteOverride;
                         targXT.ParentToEmitter = srcXT.ParentToEmitter;
+                        targXT.IgnoreGlobalRateScale = srcXT.IgnoreGlobalRateScale;
                         targXT.ShotRate = srcXT.ShotRate;
                         targXT.PauseRate = srcXT.PauseRate;
                         targXT.PauseLength = srcXT.PauseLength;
+                        targXT.ShotOverlap = srcXT.ShotOverlap;
                         targXT.PoolingEnabled = srcXT.PoolingEnabled;
                         targXT.AutoPool = srcXT.AutoPool;
-                        targXT.AutoPoolOverride = srcXT.AutoPoolOverride;
+                        targXT.AutoPoolOverride = srcXT.AutoPoolOverride;   
+                        targXT.BankingEnabled = srcXT.BankingEnabled;
                     }
                 }
             };
@@ -307,6 +378,7 @@ namespace ND_VariaBULLET
 
             Emitters = new List<GameObject>();
             EmittersCached = new List<GameObject>();
+            FireScripts = new List<FireBase>();
 
             EmitterAmount = 0;
         }

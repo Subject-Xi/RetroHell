@@ -10,28 +10,53 @@ namespace ND_VariaBULLET
 {
     public class FireBullet : FireBase, IPooler
     {
+        [Tooltip("Overrides the fired shot's sprite.")]
         public Sprite SpriteOverride;
+
+        [Tooltip("Sets conditions for parenting fired shot's transform to the emitter's.")]
         public ParentType ParentToEmitter;
 
-        [Range(100, 1)]
+        [Header("Rate Pattern")]
+
+        [Tooltip("Ignores any rate scaling that has been set in GlobalShotManager.")]
+        public bool IgnoreGlobalRateScale;
+
+        [Range(200, 1)]
+        [Tooltip("Sets rate of shots. [Lower number = more shots].")]
         public int ShotRate;
         private Timer shotRateCounter = new Timer(0);
 
         [Range(1, 100)]
+        [Tooltip("Sets rate of intermittent gaps (pauses) between shots. [Lower number = more frequent gaps. 100 = no gaps].")]
         public float PauseRate;
         private Timer pauseRateCounter = new Timer(0);
 
         [Range(1, 100)]
+        [Tooltip("Sets length of gaps produced by PauseRate.")]
         public int PauseLength;
         private Timer pauseLengthCounter = new Timer(0);
 
-        public ObjectPool Pool = new ObjectPool();
+        [Tooltip("Sets whether subsequent shots from this emitter appear over or under previous ones.")]
+        public ShotOverlap ShotOverlap = ShotOverlap.Over;
+
+
+        [Header("Shot Pooling")]
 
         [SerializeField]
+        [Tooltip("Enables pooling of fired shot at emitter level. Pool is destroyed when emitter is destroyed.")]
         private bool _poolingEnabled = false;
         public bool PoolingEnabled { get { return _poolingEnabled; } set { _poolingEnabled = value; } }
+
+        [Tooltip("Automatically starts emitter with calculated set of pre-pooled shots.")]
         public bool AutoPool;
+
+        [Tooltip("When using AutoPool, overrides pre-pooled shot amount with user defined amount.")]
         public int AutoPoolOverride;
+
+        [Tooltip("Overrides this shot's emitter-level pooling and enables pooling at the global level [GlobalShotBank]. Pool remains when emitter is destroyed.")]
+        public bool BankingEnabled;
+
+        public ObjectPool Pool = new ObjectPool();
 
         private bool triggered = false;
         private int increment;
@@ -138,7 +163,7 @@ namespace ND_VariaBULLET
 
         protected override bool ShootAtCurrentInterval()
         {
-            shotRateCounter.Run(ShotRate);
+            shotRateCounter.Run(ShotRate / (IgnoreGlobalRateScale ? 1 : GlobalShotManager.Instance.RateScale));
             pauseRateCounter.Run(PauseRate + ShotRate);
 
             if (PauseRate == 100)
@@ -177,9 +202,11 @@ namespace ND_VariaBULLET
         public override void InstantiateShot()
         {
             GameObject firedShot;
-            
+
             if (Pool.list.Count > 0)
                 firedShot = RemoveFromPool(0);
+            else if (GlobalShotBank.Instance.ContainsShot(Shot.name))
+                firedShot = GlobalShotBank.Instance.RemoveFromPool(Shot.name, 0);
             else
                 firedShot = Instantiate(Shot) as GameObject;
 
@@ -193,6 +220,7 @@ namespace ND_VariaBULLET
             shotScript.Trajectory = this.angleToPercentage();
             shotScript.ExitPoint = controller.ExitPointOffset + LocalOffset;
             shotScript.FiringScript = this;
+            shotScript.PoolBank = BankingEnabled;
 
             if (ParentToEmitter == ParentType.never)
                 shotScript.ParentToEmitter = ParentType.never;
@@ -205,7 +233,8 @@ namespace ND_VariaBULLET
             firedShot.layer = physicsLayer;
 
             shotScript.sortLayer = rend.sortingLayerName;
-            shotScript.sortOrder = ++increment + rend.sortingOrder - 9999;      
+            increment += (int)ShotOverlap;
+            shotScript.sortOrder = increment + rend.sortingOrder - 9999;
             shotScript.InitialSet();
 
             if (audiosrc != null)
@@ -238,5 +267,11 @@ namespace ND_VariaBULLET
         never,
         always,
         whileShotHeld
+    }
+
+    public enum ShotOverlap
+    {
+        Over = 1,
+        Under = -1,
     }
 }

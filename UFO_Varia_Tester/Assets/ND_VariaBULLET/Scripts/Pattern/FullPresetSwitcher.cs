@@ -9,15 +9,22 @@ namespace ND_VariaBULLET
 {
     public class FullPresetSwitcher : MonoBehaviour
     {
+        [Tooltip("Button for switching between presets, best used for testing.")]
         public KeyCode buttonSwitch;
+
+        [Tooltip("Trigger for switching between presets, set elsewhere in code.")]
         public bool triggerSwitch;
+
+        [Tooltip("Populate presets to switch through in sequential order.")]
         public GameObject[] presetPrefabs;
         protected int index;
 
+        [Tooltip("Sets delay in frames before preset is active after switching to it.")]
         public int DelayFrames = 20;
         private Timer delayTimer;
         private GameObject newPreset;
 
+        [Tooltip("Automatically loads the first preset in presetPrefabs on Start.")]
         public bool AutoSwitchOnStart;
 
         void Start()
@@ -55,10 +62,11 @@ namespace ND_VariaBULLET
         private void applyPreset(GameObject selection, bool isActive)
         {
             newPreset = Instantiate(selection);
-            newPreset.transform.parent = this.transform;
-            newPreset.transform.position = new Vector2(0, 0);
-            newPreset.transform.rotation = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z);   
+            Vector2 storedPosition = newPreset.transform.localPosition;
 
+            newPreset.transform.parent = this.transform;
+            newPreset.transform.localPosition = storedPosition;
+            newPreset.transform.rotation = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z);   
             newPreset.transform.localScale = new Vector3(1, 1, 1);
             newPreset.SetActive(isActive);
         }

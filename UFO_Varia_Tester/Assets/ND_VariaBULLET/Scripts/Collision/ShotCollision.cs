@@ -11,9 +11,16 @@ namespace ND_VariaBULLET
 {
     public class ShotCollision : MonoBehaviour, IShotCollidable
     {
+        [Tooltip("Sets which collision layers can produce explosions when colliding with this object.")]
         public string[] CollisionList;
+
+        [Tooltip("Sets the name of the explosion prefab that's instantiated upon laser collision. [Note: prefab must also be pre-loaded in GlobalShotManager.ExplosionPrefabs].")]
         public string LaserExplosion;
+
+        [Tooltip("Sets the name of the explosion prefab that's instantiated upon bullet collision. [Note: prefab must also be pre-loaded in GlobalShotManager.ExplosionPrefabs].")]
         public string BulletExplosion;
+
+        [Tooltip("Sets whether or not explosion moves with this object or remains at point of impact.")]
         public bool ParentExplosion = true;
 
         public IEnumerator OnLaserCollision(CollisionArgs sender)

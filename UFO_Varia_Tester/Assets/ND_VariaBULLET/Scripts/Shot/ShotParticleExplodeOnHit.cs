@@ -9,6 +9,7 @@ namespace ND_VariaBULLET
     public class ShotParticleExplodeOnHit : ShotNonPhysics, IRePoolable
     {
         [Header("Collision Override")]
+        [Tooltip("Bypasses CollisionList filtering, instead registering all collisions detected by the underlying collision matrix.")]
         public bool IgnoreCollisionFilter;
 
         private int frameBuffer = 3;

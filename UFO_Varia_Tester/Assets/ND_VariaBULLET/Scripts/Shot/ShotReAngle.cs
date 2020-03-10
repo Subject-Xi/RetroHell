@@ -10,16 +10,25 @@ namespace ND_VariaBULLET
     public class ShotReAngle : ShotNonPhysics, IRePoolable
     {
         [Header("ReAngle Settings")]
+
+        [Tooltip("Enables proper shot behavior for vertical orientation. [Disabled = horizontal rotation].")]
         public bool VerticalOrientation;
         private int vertMod;
+
+        [Tooltip("Sets the degree of the angling effect.")]
         public int Embellish;
 
+        [Tooltip("Enables an auto-spray effect, changing the embellish angle according to AutoEmbellishRange and AutoEmbellishSpeed.")]
         public bool AutoEmbellish;
+
+        [Tooltip("Sets the range of the AutoEmbellish spray effect on X/Y.")]
         public Vector2 AutoEmbellishRange;
 
         [Range(1,10)]
+        [Tooltip("Sets the speed of the AutoEmbellish spray effect.")]
         public int AutoEmbellishSpeed;
 
+        [Tooltip("Sets the time in frames at which point the shot changes angle.")]
         public int ReAngleTime;
         private Timer reAngle = new Timer(0);
         private bool reAngleTriggered;

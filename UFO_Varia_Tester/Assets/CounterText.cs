@@ -103,7 +103,7 @@ public class CounterText : MonoBehaviour
      }
      void SetHealthBarText()
      {
-     	Health = shotCollisionDamage.getHP();
+     	//Health = shotCollisionDamage.getHP();
      	//player.ShotCollisionDamage.getHP();
      	HealthCountText.text = "Health: " + Health.ToString();
      }

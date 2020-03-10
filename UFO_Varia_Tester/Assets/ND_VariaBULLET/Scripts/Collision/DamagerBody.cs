@@ -10,6 +10,7 @@ namespace ND_VariaBULLET
 {
     public class DamagerBody : MonoBehaviour, IDamager
     {
+        [Tooltip("Sets the amount of HP reduction produced by this object when collides with a ShotCollidable object.")]
         public float DamagePerHit;
         public float DMG { get { return DamagePerHit; } }
     }

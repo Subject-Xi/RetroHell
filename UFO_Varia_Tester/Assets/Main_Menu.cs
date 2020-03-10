@@ -25,4 +25,9 @@ public class Main_Menu : MonoBehaviour
 	{
 		SceneManager.LoadScene("BulletTesting");
 	}
+
+	public void EnemyTesting()
+	{
+		SceneManager.LoadScene("EnemyTesting");
+	}
 }

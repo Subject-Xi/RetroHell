@@ -9,13 +9,17 @@ namespace ND_VariaBULLET
 {
     public class ShotAccelerating : ShotNonPhysics, IRePoolable
     {
-        [Header("Accleration Settings")]
+        [Header("Acceleration Settings")]
+
+        [Tooltip("Sets the rate at which acceleration occurs.")]
         public AccelType VelocityCurve;
 
         [Range(0.01f, 0.5f)]
+        [Tooltip("Sets the base rate of shot acceleration. [Lower number = slower acceleration].")]
         public float AccelFactor;
 
         [Range(0,100)]
+        [Tooltip("Sets the highest speed limit that a shot can reach before it maintains a constant speed.")]
         public float SpeedLimit;
 
         private float speedOriginal;

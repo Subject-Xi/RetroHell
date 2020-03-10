@@ -11,16 +11,23 @@ namespace ND_VariaBULLET
 {
     public class ShotBase : MonoBehaviour, IDamager
     {
+        public bool PoolBank { get; set; }
+
         [HideInInspector]
         public float ShotSpeed;
+
+        [Tooltip("Ignores any speed scaling that has been set in GlobalShotManager.")]
         public bool IgnoreGlobalSpeedScale;
         protected float scale;
 
         [HideInInspector]
         public ParentType ParentToEmitter;
+
+        [Tooltip("Sets damage amount produced when this shot collides with an object that has a ShotCollisionDamage script attached.")]
         public float DamagePerHit = 1;
         public float DMG { get { return DamagePerHit; } }
 
+        [Tooltip("Sets this shot rotation intitially to that of its emitter.")]
         public bool InheritStartRotation = true;
 
         [HideInInspector]
@@ -47,6 +54,8 @@ namespace ND_VariaBULLET
         private bool emitterDestroyedFlag;
         private Timer eventCounter = new Timer(0);
 
+        protected SpriteRenderer rend;
+
         public virtual void InitialSet()
         {
             eventCounter.Reset();
@@ -67,7 +76,8 @@ namespace ND_VariaBULLET
             else if (ParentToEmitter == ParentType.never)
                 transform.parent = null;
 
-            setSprite(GetComponent<SpriteRenderer>());
+            rend = GetComponent<SpriteRenderer>();
+            setSprite(rend);
         }
 
         public virtual void Start()
@@ -161,6 +171,15 @@ namespace ND_VariaBULLET
         protected virtual void RePoolOrDestroy()
         {
             IPooler poolingScript;
+
+            if (PoolBank && this is IRePoolable && !(GlobalShotBank.Instance.PoolCount > GlobalShotBank.Instance.PoolMaxSize))
+            {
+                poolingScript = GlobalShotBank.Instance;
+                RePool(poolingScript);
+
+                return;
+            }
+
             if (FiringScript != null && FiringScript is IPooler)
             {
                 poolingScript = FiringScript as IPooler;
@@ -174,7 +193,6 @@ namespace ND_VariaBULLET
                 }
                 else
                     Kill(gameObject);
-
             }
             else
                 Kill(gameObject);
@@ -182,7 +200,11 @@ namespace ND_VariaBULLET
      
         public virtual void RePool(IPooler poolingScript) //default re-pool Behavior. Override to to accomodate custom behaviors on repool.
         {
-            poolingScript.AddToPool(this.gameObject, Emitter);
+            if (PoolBank && this is IRePoolable && !(GlobalShotBank.Instance.PoolCount > GlobalShotBank.Instance.PoolMaxSize)) //and pool available
+                poolingScript.AddToPool(this.gameObject, GlobalShotBank.Instance.transform);
+            else
+                poolingScript.AddToPool(this.gameObject, Emitter);
+
             GlobalShotManager.Instance.ActiveBullets--;
         }
 

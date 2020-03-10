@@ -10,13 +10,17 @@ namespace ND_VariaBULLET
     public class ShotBoomerang : ShotBaseColorizable, IRePoolable
     {
         [Header("Boomerang Settings")]
+
         [Range(0.1f, 3f)]
+        [Tooltip("Sets the speed factor at which the shot returns. [0.5 = half speed; 1 = no change. 2 = double speed.")]
         public float ReturnSpeed = 1.2f;
 
         [Range(0.5f, 100)]
+        [Tooltip("Sets the range in time units at which the shot returns.")]
         public float returnLimit;
         private Timer returnTimer = new Timer(0);
 
+        [Tooltip("Automatically adjusts ReturnLimit. Resulting in always returning back at the same distance travelled regardless of shot speed.")]
         public bool ReturnLimitAutoScale;
 
         private Vector2 move;

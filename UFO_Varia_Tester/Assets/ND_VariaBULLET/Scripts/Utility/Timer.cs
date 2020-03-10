@@ -4,6 +4,7 @@
 #endregion
 
 using UnityEngine;
+using System.Collections;
 
 namespace ND_VariaBULLET
 {
@@ -12,6 +13,7 @@ namespace ND_VariaBULLET
         public bool Flag;
         public static float deltaCounter { get { return Time.deltaTime * 60; } }
         private float counter;
+        public float GetCounter { get { return counter; } }
         private float reset;
 
         public Timer(float startsAt)
@@ -32,6 +34,33 @@ namespace ND_VariaBULLET
                 counter = reset;
                 Flag = true;
             }
+        }
+
+        public IEnumerator RunForFrames(float limit, System.Action<float> action)
+        {
+            while (counter < limit)
+            {
+                action(counter);
+
+                counter += deltaCounter;
+                Flag = false;
+
+                yield return null;
+            }
+
+            counter = reset;
+            Flag = true;
+        }
+
+        public IEnumerator WaitForFrames(float limit)
+        {
+            while (counter < limit)
+            {
+                counter += deltaCounter;
+                yield return null;
+            }
+
+            counter = reset;
         }
 
         public void RunOnce(float limit)

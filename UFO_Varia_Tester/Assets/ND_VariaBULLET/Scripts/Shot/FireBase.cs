@@ -12,16 +12,25 @@ namespace ND_VariaBULLET
     [ExecuteInEditMode]
     public abstract class FireBase : MonoBehaviour
     {
+        [Range(-180, 180)]
+        [Tooltip("Sets local rotation for this emitter.")]
+        public float LocalPitch;
+
+        [Tooltip("Sets image replacement for point indicator.")]
         public Sprite customIndicator;
+
+        [Tooltip("Prefab shot type that this emitter fires.")]
         public GameObject Shot;
         protected SpriteRenderer rend;
 
         protected const float speedLimit = 100;
 
+        [Tooltip("Sets the shot's speed when fired.")]
         [Range(.01f, speedLimit)]
         public float ShotSpeed = 30;
 
         [Range(-40, 40)]
+        [Tooltip("Sets the local shot exit point relative to this emitter.")]
         public float LocalOffset = 0;
 
         [HideInInspector]
@@ -35,7 +44,10 @@ namespace ND_VariaBULLET
         [HideInInspector]
         public UnityEngine.Events.UnityEvent OnStoppedFiring;
 
+        [Tooltip("Changes from emitter behavior (firing) to a node only (non-firing).")]
         public bool makeNodeOnly;
+
+        [Tooltip("Overrides the fired shot's color.")]
         public Color SpriteColor;
 
         protected AudioSource audiosrc;

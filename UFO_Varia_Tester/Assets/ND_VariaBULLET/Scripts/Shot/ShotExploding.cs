@@ -10,10 +10,13 @@ namespace ND_VariaBULLET
     public class ShotExploding : ShotNonPhysics, IRePoolable
     {
         [Header("Explode Settings")]
+
         [Range(1, 20)]
+        [Tooltip("Sets a timer in frames after which the shot explodes.")]
         public int ExplodeTimer = 1;
 
         [Range(1, 10)]
+        [Tooltip("Sets the rate at which the shot slows before it explodes. [higher = abrupt; lower = gradual].")]
         public int SlowdownRate = 1;
 
         private BasePattern childController;

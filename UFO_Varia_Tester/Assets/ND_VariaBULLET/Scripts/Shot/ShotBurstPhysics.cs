@@ -9,11 +9,14 @@ namespace ND_VariaBULLET
     public class ShotBurstPhysics : ShotPhysics, IRePoolable
     {
         [Header("Burst Settings")]
+
         [Range(100, 1)]
+        [Tooltip("Sets the time interval between propelling bursts of force. [Higher number = less bursts].")]
         public int BurstFrequency;
         private int prevFreqeuncy;
 
         [Range(0, 1)]
+        [Tooltip("Scales down the initial propelling burst of force. [0 = stand still; 1 = normal shot speed].")]
         public float InitialBurst;
 
         private Timer timer;

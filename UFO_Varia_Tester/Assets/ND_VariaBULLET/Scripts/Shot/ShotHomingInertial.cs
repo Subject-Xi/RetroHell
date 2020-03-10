@@ -16,17 +16,26 @@ namespace ND_VariaBULLET
 
         [Header("Homing Settings")]
 
-        //targetDirect, if set, takes precedence over targetFromTag
+        [Tooltip("Directly sets the transform of the target to follow. [takes precedence over targetFromTag].")]
         public Transform targetDirect;
+
+        [Tooltip("Sets target(s) to follow by its tag.")]
         public string targetFromTag;
 
+        [Tooltip("Sets speed of rotation towards an object when tracking it.")]
         public float TrackRotationSpeed = 20;
+
+        [Tooltip("Sets a radius in units wherein the shot will recognize a homing target.")]
         public float EngageRadius = 2;
 
         [Range(1, 10)]
+        [Tooltip("Sets an FPS interval at which point the shot re-checks for the closest target to home in on. [Higher number = more frequent re-check].")]
         public int RecalculationFPS = 3; //used to recalc closest target every 6-to-60 frames
 
+        [Tooltip("Scales the initial propelling burst of force.")]
         public float InitialPush;
+
+        [Tooltip("Sets the timer interval between propelling bursts of force. [Higher number = less bursts].")]
         public int BurstFrequency = 45;
 
         private Timer burstTimer;

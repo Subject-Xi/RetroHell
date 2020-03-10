@@ -14,23 +14,31 @@ namespace ND_VariaBULLET
         private HomingCalc calc;
 
         [Header("Homing Settings")]
-        //targetDirect, if set, takes precedence over targetFromTag
-        public Transform targetDirect; 
+
+        [Tooltip("Directly sets the transform of the target to follow. [Takes precedence over targetFromTag].")]
+        public Transform targetDirect;
+
+        [Tooltip("Sets target(s) to follow by tag.")]
         public string targetFromTag;
 
+        [Tooltip("Sets the homing rotation behavior. [Tracking = rotates towards tracked object; Free = normal rotation setting apply].")]
         public HomingRotation RotationType;
 
         [Range(2, 40)]
+        [Tooltip("Sets rotation speed when tracking type rotation is used for RotationType.")]
         public float TrackRotationSpeed = 20;
 
         [Range(2, 60)]
+        [Tooltip("Sets the time in frames at which shots start homing on a target after being fired.")]
         public int homingEngageTime;
         private Timer homingEngage = new Timer(0);
 
         [Range(2, 100)]
+        [Tooltip("Sets a radius in units wherein the shot will recognize a homing target.")]
         public float EngageRadius = 2;
 
         [Range(1, 10)]
+        [Tooltip("Sets an FPS interval at which point the shot re-checks for the closest target to home in on. [Higher number = more frequent re-check].")]
         public int RecalculationFPS = 3; //used to recalc closest target every 6-to-60 frames.
 
         private Vector2 lastKnownPos;

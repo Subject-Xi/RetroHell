@@ -10,17 +10,24 @@ namespace ND_VariaBULLET
     public class ShotSpeedWave : ShotNonPhysics, IRePoolable
     {
         [Header("Wave Settings")]
-        public bool ScaleToSpeed;   
+
+        [Tooltip("Adjusts the wave effect according to shot speed. [Faster shot = faster wave effect].")]
+        public bool ScaleToSpeed;
+
+        [Tooltip("Sets the curvature of the speed wave effect.")]
         public AnimationCurve WaveForm;
 
         [Range(2,20)]
+        [Tooltip("Accents the peaking of the wave effect.")]
         public int WaveAccent = 5;
 
         [Range(1,100)]
+        [Tooltip("Sets the amount of wave cycles before the shot speed normalizes.")]
         public int Cycles = 1;
         private int cycleCounter;
 
         [Range(1,10)]
+        [Tooltip("Sets the rate of the wave effect.")]
         public int frequency;
 
         private float accumulator;

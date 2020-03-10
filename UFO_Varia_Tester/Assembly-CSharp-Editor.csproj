@@ -55,6 +55,7 @@
   <ItemGroup>
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Editor\BasePatternEditor.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Editor\FireBaseEditor.cs" />
+     <Compile Include="Assets\ND_VariaBULLET\Scripts\Editor\RatePopUp.cs" />
      <Compile Include="Assets\ND_VariaBULLET\Scripts\Editor\VariaManager.cs" />
      <Compile Include="Assets\TutorialInfo\Scripts\Editor\TutorialInfoEditor.cs" />
  <Reference Include="Unity.PackageManagerUI.Editor">
